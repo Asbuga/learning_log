@@ -5,11 +5,12 @@ from django.core.exceptions import ValidationError
 
 class CustomUserCreationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
-    password_confirm = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
+    password_confirm = forms.CharField(label='Confirm pass', widget=forms.PasswordInput)
     
     class Meta:
         model = User
         fields = ['username', 'password', 'password_confirm']
+        help_texts = {'username': None}
     
     def clean(self):
         cleaned_data = super().clean()
