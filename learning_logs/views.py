@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 
@@ -26,10 +26,14 @@ def check_topic_owner(request, topic):
 @login_required
 def topic(request, topic_id):
     """List the Entry by Topic."""
-    topic = Topic.objects.get(id=topic_id)
+    topic = get_object_or_404(Topic, id=topic_id)
     check_topic_owner(request, topic)
     entries = topic.entry_set.order_by('-date_added')
     context = {'topic': topic, 'entries': entries}
+    
+    if request.method == 'POST':
+        topic.delete()
+        return redirect('learning_logs:topics')
     return render(request, 'learning_logs/topic.html', context)
 
 
@@ -80,11 +84,13 @@ def edit_entry(request, entry_id):
 
     if request.method != 'POST':
         form = EntryForm(instance=entry)
+    elif 'delete' in request.POST:
+        entry.delete()
+        return redirect('learning_logs:topic', topic_id=topic.id)
     else:
         form = EntryForm(instance=entry, data=request.POST)
         if form.is_valid():
             form.save()
             return redirect('learning_logs:topic', topic_id=topic.id)
-        
     context = {'entry': entry, 'topic': topic, 'form': form}
     return render(request, 'learning_logs/edit_entry.html', context)

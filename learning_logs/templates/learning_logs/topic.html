@@ -4,6 +4,12 @@
     <h4 class="text">
         <a href="{% url 'learning_logs:topics' %}">Topics</a> -> 
         {{ topic }}
+        {% if topic.id %}
+            <form action="{% url 'learning_logs:topic' topic.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger float-right" onclick="return confirm('Are you sure?')">Delete topic</button>
+            </form>            
+        {% endif %}
     </h4>
 {% endblock %}
 
