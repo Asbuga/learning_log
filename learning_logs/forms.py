@@ -7,7 +7,10 @@ class TopicForm(forms.ModelForm):
     class Meta:
         model = Topic
         fields = ['text']
-        lables = {'text': ''}
+        labels = {'text': ''}
+        widgets = {
+            'text': forms.TextInput(attrs={'placeholder': 'add a new topic name...'})
+        }
 
 
 class EntryForm(forms.ModelForm):
